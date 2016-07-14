@@ -25,6 +25,7 @@
         var nameArray = [];
         //mapMarker Container
         var markerArray = [];
+        var installationContainer = [];
         //contains Polylines and markers
         var hostedInstitutionsArray = [];
     //Functions:
@@ -42,16 +43,23 @@
             
             //{{MEDIA_URL}}
             var locationArray = [
-            {%for i in inst_list%}{% spaceless %}
-             [new google.maps.LatLng({{i.lat}},{{i.lng}}), 0, "{{i.name}}", {%if i.logo%}"{{i.logo.url}}"{%else%}"{% static 'logos/harvard.png' %}"{%endif%}, null]
+            {%for i in install_list%}{% spaceless %}
+             [new google.maps.LatLng({{i.lat}},{{i.lng}}), 52, "{{i.name}}", {%if i.logo%}"{{i.logo.url}}"{%else%}"{% static 'logos/harvard.png' %}"{%endif%}, null]
                 {% if not forloop.last %},{%endif%}
                 {% endspaceless %}
             {%endfor%}
             ]
-            console.log(LocationArray);
+            
+            var installationArray = [];
+            {%for i in institute_list%}
+            var instance = new google.maps.LatLng({{i.lat}},{{i.lng}});
+            installationArray.push(instance);
+            {%endfor%} 
+           
+            
             
          //[abacusVerse,9, 'Abacus Dataverse', "{% static 'logos/abacus.png' %}", subAbacus] ,        
-            {var abacusVerse = new google.maps.LatLng(49.259982, -123.250212);
+            /*{var abacusVerse = new google.maps.LatLng(49.259982, -123.250212);
             var cimmytVerse = new google.maps.LatLng(19.531535, -98.846064);
             var dansVerse = new google.maps.LatLng(52.54726, 5.242346);
             var dataspaceVerse = new google.maps.LatLng(22.336281, 114.266721);
@@ -67,10 +75,10 @@
             var uitVerse = new google.maps.LatLng(69.679749, 18.97127);
             var unbralVerse = new google.maps.LatLng(-23.565774, -46.319782);
             var albertaVerse = new google.maps.LatLng(53.523538, -113.523486);
-            var maineVerse = new google.maps.LatLng(44.901346, -68.669681);}
+            var maineVerse = new google.maps.LatLng(44.901346, -68.669681);}*/
           
             //Dataverse Hosted Institution Location (many arrays)
-            {var subAbacus = [new google.maps.LatLng(49.278745, -122.919765), new google.maps.LatLng(53.892195, -122.814331),new google.maps.LatLng(48.462738, -123.312208)];
+            /*{var subAbacus = [new google.maps.LatLng(49.278745, -122.919765), new google.maps.LatLng(53.892195, -122.814331),new google.maps.LatLng(48.462738, -123.312208)];
             var subCimmyt = [];
             var subDans = [new google.maps.LatLng(52.090087, 5.122366),new google.maps.LatLng(51.563027, 5.042295),new google.maps.LatLng(50.847114, 5.686326),new google.maps.LatLng(53.219045, 6.562504),new google.maps.LatLng(51.917837, 4.525422),new google.maps.LatLng(52.000524, 4.371293),new google.maps.LatLng(51.448168, 5.490908),new google.maps.LatLng(52.238496, 6.857085)];
             var subDataspace = [];
@@ -86,11 +94,11 @@
             var subUit = [];
             var subUnbral = [];
             var subAlberta = [];
-            var subMaine = [new google.maps.LatLng(47.250275, -68.589503),new google.maps.LatLng(43.457971, -70.389157),new google.maps.LatLng(43.661841, -70.275698)];}
+            var subMaine = [new google.maps.LatLng(47.250275, -68.589503),new google.maps.LatLng(43.457971, -70.389157),new google.maps.LatLng(43.661841, -70.275698)];}*/
             
             //Main Location Array
                 //[location (google map location), size (int), title (string), file name (string), Hosted institutions location (array)]
-            var LocationArray = [ 
+            /*var LocationArray = [ 
                                  [abacusVerse,9, 'Abacus Dataverse', "{% static 'logos/abacus.png' %}", subAbacus] , 
                                  [cimmytVerse,3, 'CIMMYT Dataverse', "{% static 'logos/cimmyt.gif' %}", subCimmyt] , 
                                  [dansVerse,101, 'DANS Dataverse', "{% static 'logos/dans.png' %}", subDans] , 
@@ -108,7 +116,7 @@
                                  [unbralVerse,1,'UnBral Fronteiras Dataverse', "{% static 'logos/unbral.jpg' %}", subUnbral] , 
                                  [albertaVerse,39,'University of Alberta Dataverse', "{% static 'logos/alberta.png' %}", subAlberta] , 
                                  [maineVerse,40,'Maine Dataverse',"{% static 'logos/maine.png' %}" , subMaine] 
-                                ];
+                                ];*/
             
             //++++++++++++++++++++++++++++++++ADD INSTALLATIONS HERE+++++++++++++++++++++++++++
             //(latitude, longitude, 'title', 'imagefile', (as many latitude, longitude pairs as you want))
@@ -128,11 +136,16 @@
             
             
             
-            //initiate dataverse markers
+             initInstitutions(installationArray, dataverseMap);
+             //initiate dataverse markers
             for (var i = 0; i < locationArray.length; i++){ 
                 initMarker(i, locationArray, dataverseMap);
                 //initHostedInstitutions(i, locationArray, dataverseMap);
             };
+             
+           
+             
+            
             
             //Control Bar
             initControlBar(dataverseMap, locationArray, infoArray, markerArray); 
@@ -158,6 +171,19 @@
             var controlBar = new ControlBar(controlBarDiv, map, locationArray, infoArray, markerArray);
             controlBarDiv.index = 0;
             map.controls[google.maps.ControlPosition.BOTTOM_CENTER].push(controlBarDiv);
+        }
+             
+        function initInstitutions(installationArray, dataverseMap){
+            for(var i = 0; i < installationArray.length; i++){
+               var newMarker = new google.maps.Marker({
+                    position: installationArray[i],
+                    map: dataverseMap,
+                    icon: "{% static 'subs.png' %}",
+                    zIndex: google.maps.Marker.MIN_ZINDEX - 1
+                });
+                newMarker.setOpacity(.3);
+                installationContainer.push(newMarker);
+            }
         }
         
         //initialize markers & infowindows at dataverses in map data
@@ -284,6 +310,9 @@
                 nameArray.push(titlewindow);
             }   
         }
+        
+        
+        
         /*
         //initialize sub dataverses
         function initHostedInstitutions(i, locationArray, dataverseMap){
@@ -562,6 +591,15 @@
                 shrinkLogo();
                 closeAllInfoWindows();
                 showAllMarkers();
+                
+            });
+            dataverseMap.addListener('zoom_changed', function(){ 
+                for(var i = 0; i < installationContainer.length; i++){
+                   if(dataverseMap.getZoom() < 4)   installationContainer[i].setOpacity(dataverseMap.getZoom()*.3);
+                }
+                for(var i = 0; i < markerArray.length; i++){
+                    markerArray[i].setZIndex(google.maps.MAX_ZINDEX + 1);
+                }
                 
             });
         }

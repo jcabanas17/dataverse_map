@@ -16,8 +16,12 @@ def installations(request, institution_name):
     return HttpfResponse('This is the newest afilliated institution in the <b>%s</b> installation' % institution_name)
 
 def Map(request):
-    inst_list = Installation.objects.all()
-    d = dict(inst_list = inst_list)
+    install_list = Installation.objects.all()
+    institute_list = Institution.objects.all()
+    d = dict(
+        install_list = install_list,
+        institute_list = institute_list,
+    )
     
     return render(request, 'installations/map.html', d)
 
