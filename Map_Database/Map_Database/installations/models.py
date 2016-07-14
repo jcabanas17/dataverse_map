@@ -5,7 +5,7 @@ from decimal import Decimal
 
 # Create your models here.
 @python_2_unicode_compatible
-class installation(models.Model):
+class Installation(models.Model):
     name = models.CharField(max_length=50)
     lat = models.DecimalField(max_digits=9, decimal_places=6, default=Decimal('0.0000'))
     lng = models.DecimalField(max_digits=9, decimal_places=6, default=Decimal('0.0000'))
@@ -14,7 +14,7 @@ class installation(models.Model):
     pass
 
 @python_2_unicode_compatible    
-class institution(models.Model):
+class Institution(models.Model):
     name = models.CharField(max_length=50)
     lat = models.DecimalField(max_digits=9, decimal_places=6, blank=True, default=Decimal('0.0000'))
     lng = models.DecimalField(max_digits=9, decimal_places=6, blank=True, default=Decimal('0.0000'))

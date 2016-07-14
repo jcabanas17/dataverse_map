@@ -2,7 +2,7 @@
 <link rel='stylesheet' href='{% static "CSS/map.css" %}'>
 
 <h1>Index Page</h1>
-{%for installation in Installation%}
-<li><a href="{%url 'installations_index' installation.name %}">{{installation.name}}</a><br><br>
+{%for i in installation%}
+<li><a href="{%url 'installations_index' i.name %}">{{i.name}}</a><br><br>
 </li>
 {%endfor%}
