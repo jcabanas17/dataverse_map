@@ -6,9 +6,10 @@ from decimal import Decimal
 # Create your models here.
 @python_2_unicode_compatible
 class Installation(models.Model):
-    name = models.CharField(max_length=50)
+    name = models.CharField(max_length=50, unique=True)
     lat = models.DecimalField(max_digits=9, decimal_places=6, default=Decimal('0.0000'))
     lng = models.DecimalField(max_digits=9, decimal_places=6, default=Decimal('0.0000'))
+    logo = models.ImageField(upload_to='uploads/', null=True, blank=True)
     def __str__(self):
         return self.name
     pass
@@ -20,7 +21,9 @@ class Institution(models.Model):
     lng = models.DecimalField(max_digits=9, decimal_places=6, blank=True, default=Decimal('0.0000'))
     host = models.ForeignKey(
         'installation',
-        on_delete=models.CASCADE
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True
     )
     def __str__(self):
         return self.name

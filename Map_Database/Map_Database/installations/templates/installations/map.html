@@ -40,10 +40,12 @@
             }
             //Installation Location Data
             
-            
+            //{{MEDIA_URL}}
             var locationArray = [
-            {%for i in inst_list%}
-             [new google.maps.LatLng({{i.lat}},{{i.lng}}), 0, "{{i.name}}", "{% static 'logos/abacus.png' %}", null]{% if not forloop.last %},{%endif%}
+            {%for i in inst_list%}{% spaceless %}
+             [new google.maps.LatLng({{i.lat}},{{i.lng}}), 0, "{{i.name}}", {%if i.logo%}"{{i.logo.url}}"{%else%}"{% static 'logos/harvard.png' %}"{%endif%}, null]
+                {% if not forloop.last %},{%endif%}
+                {% endspaceless %}
             {%endfor%}
             ]
             console.log(LocationArray);
