@@ -217,7 +217,9 @@
                 });
                 
                 var titlewindow = new google.maps.InfoWindow({
-                    content: locationArray[i][2]
+                    content: locationArray[i][2],
+                    disableAutoPan: true
+                    
                 });
                 
                 newMarker.addListener('click', function() {
@@ -253,7 +255,8 @@
                 });
                 
                  var titlewindow = new google.maps.InfoWindow({
-                    content: locationArray[i][2]
+                    content: locationArray[i][2],
+                    disableAutoPan: true
                 });
                 
                 newMarker.addListener('click', function() {
@@ -288,7 +291,8 @@
                 });
                 
                  var titlewindow = new google.maps.InfoWindow({
-                    content: locationArray[i][2]
+                    content: locationArray[i][2],
+                    disableAutoPan: true
                 });
                 
                 newMarker.addListener('click', function() {
@@ -410,13 +414,22 @@
                 }
             }
         }
-        
+             
+        function hideMarker(marker){
+            markerArray[marker].setOpacity(.4);
+        }
+             
         //shows all markers
         function showAllMarkers(){
             for(var i = 0; i < markerArray.length; i++){
                 markerArray[i].setOpacity(1);
             }
         }
+             
+        function showMarker(marker){
+            markerArray[marker].setOpacity(1);
+        }
+    
         
         function setDefaultView(dataverseMap){
             dataverseMap.setCenter({lat: 30, lng: 0});
@@ -439,14 +452,17 @@
         function shrinkLogo(){
             for(var i = 0; i < markerArray.length; i++){
                 var obj = document.getElementById(i);
-                obj.classList.remove('large');
+                if (obj.className == 'large'){                                  
+                    obj.classList.remove('large');
+                }
                 obj.classList.add('small');
             }   
         }
         
         function shrinkLogo(i){
             var obj = document.getElementById(i);
-            obj.classList.add('small');
+            if (obj != null)
+                obj.classList.add('small');
         }
         
         function scrollLeftDiv(int){
@@ -487,7 +503,7 @@
                     if(isInfoWindowOpen(infoArray[i]))
                         status = true; 
                 }
-                console.log(status);
+                
                 if(!status) {
                     shrinkLogo();  
                     showAllMarkers();
@@ -531,7 +547,6 @@
             //img container
                 var imgDiv = document.createElement('div');
                 imgDiv.classList.add('small');  
-                
                 imgDiv.id = i;
                 innerControlUI.appendChild(imgDiv);
              //img
@@ -541,39 +556,23 @@
                 imgDiv.appendChild(img);
                 
                 //event listeners for icon mouseover and click
-                imgDiv.addEventListener('mouseover', function mouseover(imgDiv) {
+                imgDiv.addEventListener('mouseenter', function mouseover(imgDiv) {
                     var index = this.id;
                     var center = locationArray[index][0];
-                    //closeAllClusters();
-                    if(index == 0){
-                        if (isInfoWindowOpen(infoArray[parseInt(index) + 1]));
-                        else {
-                            closeAllInfoWindows(index);
-                            openTitle(index, dataverseMap);
-                        }
-                    }else if(index == (markerArray.length - 1)) {
-                        if (isInfoWindowOpen(infoArray[parseInt(index) - 1]));
-                        else {
-                            closeAllInfoWindows(index);
-                            openTitle(index, dataverseMap);
-                        }
-                    }else {
-                        if (isInfoWindowOpen(infoArray[parseInt(index) + 1])||isInfoWindowOpen(infoArray[parseInt(index) - 1]));
-                        else {
-                            closeAllInfoWindows(index);
-                            openTitle(index, dataverseMap);
-                        }
-                    } 
-                    //showHostedInstitutions(index, dataverseMap);
-                    hideAllMarkers(markerArray[index]);
-                    expandLogo(index);
+                    if(isInfoWindowOpen(infoArray[parseInt(index)]));
+                    else {
+                        expandLogo(index); 
+                        closeAllInfoWindows(index);
+                        openTitle(index, dataverseMap);
+                    }
                     
                 });
-                imgDiv.addEventListener('mouseout', function mouseout(imgDiv) {
+                
+                imgDiv.addEventListener('mouseleave', function mouseout(imgDiv) {
                     var index = this.id;
                     var center = locationArray[index][0];
                     closeAllTitles();
-                    //closeAllClusters();
+                    shrinkLogo();
                 }); 
                 imgDiv.addEventListener('click', function click(imgDiv) {
                     var index = this.id;
@@ -584,21 +583,30 @@
                         dataverseMap.setZoom(dataverseMap.getZoom() + 1);
                     }    
                     infoArray[index].open(dataverseMap, markerArray[index]);
+                    showAllMarkers();
                 });    
             }
             
             dataverseMap.addListener('dblclick', function(){ 
-                shrinkLogo();
                 closeAllInfoWindows();
                 showAllMarkers();
-                
             });
+            
             dataverseMap.addListener('zoom_changed', function(){ 
                 for(var i = 0; i < installationContainer.length; i++){
-                   if(dataverseMap.getZoom() < 4)   installationContainer[i].setOpacity(dataverseMap.getZoom()*.3);
+                   if(dataverseMap.getZoom() == 2)
+                       installationContainer[i].setOpacity(.3);
+                    else if(dataverseMap.getZoom() < 4)
+                       installationContainer[i].setOpacity(.4);
+                    else if(dataverseMap.getZoom() < 6)
+                       installationContainer[i].setOpacity(.6);
+                    else installationContainer[i].setOpacity(.8);
+                    installationContainer[i].setZIndex(google.maps.MAX_ZINDEX*(-1));
                 }
                 for(var i = 0; i < markerArray.length; i++){
                     markerArray[i].setZIndex(google.maps.MAX_ZINDEX + 1);
+                    
+                    showAllMarkers();
                 }
                 
             });
