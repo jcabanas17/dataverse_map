@@ -387,9 +387,10 @@
         }
         
         function closeAllTitles(){
-            for(var i = 0; i < infoArray.length; i++){
-                    nameArray[i].close();
+            for(var i = 0; i < nameArray.length; i++){
+                nameArray[i].close();
             }
+            
         }
         
         function isInfoWindowOpen(infoWindow){
@@ -423,6 +424,7 @@
         function showAllMarkers(){
             for(var i = 0; i < markerArray.length; i++){
                 markerArray[i].setOpacity(1);
+                markerArray[i].setZIndex(google.maps.MAX_ZINDEX + 1)
             }
         }
              
@@ -497,7 +499,7 @@
             controlUI.appendChild(controlUI2);
             
             // ControllUI events 
-            controlUI.addEventListener('mouseleave', function(){
+            /*controlUI.addEventListener('mouseleave', function(){
                 var status = false;
                 for(var i = 0; i < infoArray.length; i++){
                     if(isInfoWindowOpen(infoArray[i]))
@@ -508,7 +510,7 @@
                     shrinkLogo();  
                     showAllMarkers();
                 }
-            });
+            });*/
             
             //Scroll bar
             var innerControlUI = document.createElement('div');
@@ -570,10 +572,13 @@
                 
                 imgDiv.addEventListener('mouseleave', function mouseout(imgDiv) {
                     var index = this.id;
+                    if(!isInfoWindowOpen(infoArray[parseInt(index)]))
+                        shrinkLogo(index);
                     var center = locationArray[index][0];
                     closeAllTitles();
                     shrinkLogo();
                 }); 
+                
                 imgDiv.addEventListener('click', function click(imgDiv) {
                     var index = this.id;
                     closeAllInfoWindows();
@@ -584,6 +589,7 @@
                     }    
                     infoArray[index].open(dataverseMap, markerArray[index]);
                     showAllMarkers();
+                    
                 });    
             }
             
