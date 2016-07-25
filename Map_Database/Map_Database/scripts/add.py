@@ -1,3 +1,15 @@
+# Only deletes redundant institutions to refresh their affiliation
+#
+#
+#
+#
+
+
+
+
+
+
+
 import os, sys
 from os.path import isdir, realpath
 
@@ -55,11 +67,12 @@ for line in lines:
         print created, ",", name, "installation not created"
         
 print 'institutions:'
-#Institution.objects.all().delete()
+
 fname2 = 'institution_data.txt'
 lines = open(fname2, 'r').readlines()
 for line in lines:
     line = line.strip()
+    
     if len(line) == 0:
         continue    # go to the next line
 
@@ -72,8 +85,9 @@ for line in lines:
         continue
 
     name, lat, lng = items
-
-    #'host':Installation.objects.filter(name=sys.argv[1]),
+    
+    Institution.objects.filter(name=name).delete()
+    
     inst = Installation.objects.filter(name=sys.argv[1])
     
     obj, created = Institution.objects.get_or_create(
