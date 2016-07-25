@@ -44,8 +44,9 @@
             }
             
             //Installation Location Data
-//0           1       2         3         4       5              6           7
-//coordinates size    name      logo      null    description    version     marker
+//0           1       2         3         4       5              6           7      8
+//coordinates size    name      logo      null    description    version     marker []
+            
             
             var locationArray = [
             {%for i in install_list%}{% spaceless %}
@@ -55,16 +56,17 @@
             {%endfor%}
             ]
             
-            var institutionArray = [];
-            {%for k in institute_list%}{% spaceless %}
-            var instance = new google.maps.LatLng({{k.lat}},{{k.lng}});
-            institutionArray.push(instance);
-            {% endspaceless %}
-            {%endfor%}
+            var institutionArray = [
+            {%for a in arr%}
+                [{% spaceless %}
+                {%for z in a%}
+                 {%if z.lat and z.lng%}
+                new google.maps.LatLng(parseFloat({{z.lat}}),parseFloat({{z.lng}})){%endif%}{% if not forloop.last %},{%endif%}
+                {%endfor%}
+                {% endspaceless %}]{% if not forloop.last %},{%endif%}
+                {%endfor%}     
+            ]
             
-            
-           
-        
             //Map Options
             var center = new google.maps.LatLng(30, 0);
             var zoom = 2;
@@ -74,8 +76,10 @@
             var dataverseMap = newMap(center, zoom, minZoom);
       
             initInstitutions(institutionArray, dataverseMap);
-            initInstitutionsHighlight(institutionArray, dataverseMap, locationArray[1][7]);
-            
+            for(var i = 0; i < institutionArray.length; i++){
+                initInstitutionsHighlight(institutionArray, dataverseMap, locationArray[i][7], i);
+            }
+                
              //initiate dataverse markers
             for (var i = 0; i < locationArray.length; i++){ 
                 initMarker(i, locationArray, dataverseMap);
@@ -110,30 +114,37 @@
              
         function initInstitutions(institutionArray, dataverseMap){
             for(var i = 0; i < institutionArray.length; i++){
-               var newMarker = new google.maps.Marker({
-                    position: institutionArray[i],
-                    map: dataverseMap,
-                    icon: "{% static 'subs.png' %}",
-                    zIndex: google.maps.Marker.MIN_ZINDEX - 1
-                });
-                newMarker.setOpacity(.3);
-                installationContainer.push(newMarker);
+                var Array = [];
+                for(var j = 0; j < institutionArray[i].length; j++){
+                    var newMarker = new google.maps.Marker({
+                        position: institutionArray[i][j],
+                        map: dataverseMap,
+                        icon: "{% static 'subs.png' %}",
+                        zIndex: google.maps.Marker.MIN_ZINDEX - 1
+                    });
+                    newMarker.setOpacity(.3);
+                    Array.push(newMarker);
+                }
+                installationContainer.push(Array);
             }
         }
              
-        function initInstitutionsHighlight(institutionArray, dataverseMap, marker){
-            for(var i = 0; i < institutionArray.length; i++){
-               var newMarker = new google.maps.Marker({
-                    position: institutionArray[i][0],
-                    map: dataverseMap,
-                    icon: marker,
-                    zIndex: google.maps.Marker.MIN_ZINDEX - 1
-                });
+        function initInstitutionsHighlight(institutionArray, dataverseMap, custom_marker, i){
+            var Array = [];
+            for(var j = 0; j < institutionArray[i].length; j++){
+                    console.log("'"+ custom_marker + "'")
+                    var newMarker = new google.maps.Marker({
+                        position: institutionArray[i][j],
+                        map: dataverseMap,
+                        icon: custom_marker,
+                        zIndex: google.maps.Marker.MIN_ZINDEX - 1
+                    });
                 newMarker.setOpacity(0);
-                installationContainerHighlighted.push(newMarker);
+                Array.push(newMarker);
             }
+            installationContainerHighlighted.push(Array);
         }
-        
+            
         //initialize markers & infowindows at dataverses in map data
         function initMarker(i, locationArray, dataverseMap){
         
@@ -486,7 +497,19 @@
                         closeAllInfoWindows(index);
                         openTitle(index, dataverseMap);
                     }
+                    for(var j = 0; j < installationContainer[index].length; j++){
+                        if(installationContainerHighlighted[index][j].opacity == 0){
+                            installationContainer[index][j].setOpacity(0);  
+                            installationContainerHighlighted[index][j].setOpacity(.6);
+                            for(var i = 0; i < markerArray.length; i++){
+                                markerArray[i].setZIndex(google.maps.MAX_ZINDEX + 1);
+                            }
+                        }
+                    }
                     
+                    for(var i = 0; i < markerArray.length; i++){
+                        markerArray[i].setZIndex(google.maps.MAX_ZINDEX + 1);
+                    }
                 });
                 
                 imgDiv.addEventListener('mouseleave', function mouseout(imgDiv) {
@@ -496,6 +519,23 @@
                     var center = locationArray[index][0];
                     closeAllTitles();
                     shrinkLogo();
+                        for(var j = 0; j < installationContainer[index].length; j++){
+                            if(installationContainer[index][j].opacity == 0){
+                                if(dataverseMap.getZoom() == 2)
+                                    installationContainer[index][j].setOpacity(.3);
+                                else if(dataverseMap.getZoom() < 4)
+                                    installationContainer[index][j].setOpacity(.4);
+                                else if(dataverseMap.getZoom() < 6)
+                                    installationContainer[index][j].setOpacity(.6);
+                                else installationContainer[index][j].setOpacity(.8);
+
+                                installationContainerHighlighted[index][j].setOpacity(0);
+                                for(var i = 0; i < markerArray.length; i++){
+                                    markerArray[i].setZIndex(google.maps.MAX_ZINDEX + 1);
+                            }
+                            }   
+                        }
+
                 }); 
                 
                 imgDiv.addEventListener('click', function click(imgDiv) {
@@ -524,14 +564,20 @@
             
             dataverseMap.addListener('zoom_changed', function(){ 
                 for(var i = 0; i < installationContainer.length; i++){
-                   if(dataverseMap.getZoom() == 2)
-                       installationContainer[i].setOpacity(.3);
-                    else if(dataverseMap.getZoom() < 4)
-                       installationContainer[i].setOpacity(.4);
-                    else if(dataverseMap.getZoom() < 6)
-                       installationContainer[i].setOpacity(.6);
-                    else installationContainer[i].setOpacity(.8);
-                    installationContainer[i].setZIndex(google.maps.MAX_ZINDEX*(-1));
+                    for(var j = 0; j < installationContainer[i].length; j++){ 
+                        if(dataverseMap.getZoom() == 2)
+                        installationContainer[i][j].setOpacity(.3);
+                        else if(dataverseMap.getZoom() < 4)
+                            installationContainer[i][j].setOpacity(.4);
+                        else if(dataverseMap.getZoom() < 6)
+                            installationContainer[i][j].setOpacity(.6);
+                        else installationContainer[i][j].setOpacity(.8);
+                            installationContainer[i][j].setZIndex(google.maps.MAX_ZINDEX*(-1));
+                        
+                        for(var i = 0; i < markerArray.length; i++){
+                                markerArray[i].setZIndex(google.maps.MAX_ZINDEX + 1);
+                        }
+                    }
                 }
                 for(var i = 0; i < markerArray.length; i++){
                     markerArray[i].setZIndex(google.maps.MAX_ZINDEX + 1);  

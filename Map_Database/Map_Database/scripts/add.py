@@ -55,7 +55,7 @@ for line in lines:
         print created, ",", name, "installation not created"
         
 print 'institutions:'
-Institution.objects.all().delete()
+#Institution.objects.all().delete()
 fname2 = 'institution_data.txt'
 lines = open(fname2, 'r').readlines()
 for line in lines:

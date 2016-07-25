@@ -17,10 +17,15 @@ def installations(request, institution_name):
 
 def Map(request):
     install_list = Installation.objects.all()
-    institute_list = Institution.objects.all()
+    arr = []
+    
+    for i  in install_list:
+        lists = Institution.objects.filter(host__name=i.name)
+        arr.append(lists)
+    
     d = dict(
         install_list = install_list,
-        institute_list = institute_list,
+        arr = arr,
     )
     
     return render(request, 'installations/map.html', d)

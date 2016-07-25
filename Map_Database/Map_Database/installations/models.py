@@ -21,10 +21,10 @@ class Installation(models.Model):
 @python_2_unicode_compatible    
 class Institution(models.Model):
     name = models.CharField(max_length=50)
-    lat = models.DecimalField(max_digits=9, decimal_places=6, blank=True, default=Decimal('0.0000'))
-    lng = models.DecimalField(max_digits=9, decimal_places=6, blank=True, default=Decimal('0.0000'))
+    lat = models.DecimalField(max_digits=9, decimal_places=6, blank=False, default=Decimal('0.0000'))
+    lng = models.DecimalField(max_digits=9, decimal_places=6, blank=False, default=Decimal('0.0000'))
     host = models.ForeignKey(
-        'installation',
+        Installation,
         on_delete=models.SET_NULL,
         null=True,
         blank=True
