@@ -10,6 +10,10 @@ class Installation(models.Model):
     lat = models.DecimalField(max_digits=9, decimal_places=6, default=Decimal('0.0000'))
     lng = models.DecimalField(max_digits=9, decimal_places=6, default=Decimal('0.0000'))
     logo = models.ImageField(upload_to='uploads/', null=True, blank=True)
+    marker = models.ImageField(upload_to='uploads/', null=True, blank=True)
+    description = models.TextField(null=True, blank=True)
+    url = models.TextField(null=True, blank=True)
+    version = models.CharField(max_length=6, unique=False, null=True, blank=True)
     def __str__(self):
         return self.name
     pass

@@ -87,3 +87,18 @@ html, body {
     top: 17px;
     left: -25px;
 }
+.metricsdiv {
+    height: auto;
+    width: auto;
+}
+
+.metrics {
+    font-size: 1.5em;
+    font-family: monospace;
+}
+.metricstitle {
+    font-size: 1.5em;
+    font-family: monospace;
+    text-align: center;
+    font-weight:normal;
+}

@@ -14,4 +14,4 @@ Peking University	39.9939231	116.3065393
 UiT	69.679749	18.97127
 UnBral Fronteiras	-23.565774	-46.319782
 University of Alberta	53.4943212	-113.5490268
-Maine Dataverse	44.901346	-68.669681
+University of Maine 44.901346	-68.669681

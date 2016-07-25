@@ -72,12 +72,13 @@ for line in lines:
         continue
 
     name, lat, lng = items
-    
-    
 
+    #'host':Installation.objects.filter(name=sys.argv[1]),
+    inst = Installation.objects.filter(name=sys.argv[1])
+    
     obj, created = Institution.objects.get_or_create(
         name = name,
-        defaults = {'lat':lat, 'lng':lng}
+        defaults = {'lat':lat, 'lng':lng, 'host':inst[0],}
     )
       
     #print obj, created
