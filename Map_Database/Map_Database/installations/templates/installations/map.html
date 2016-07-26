@@ -497,6 +497,14 @@
                         closeAllInfoWindows(index);
                         openTitle(index, dataverseMap);
                     }
+                    
+                    for(var j = 0; j < installationContainer.length; j++){
+                        for(var k = 0; k < installationContainer[j].length; k++){
+                            installationContainer[j][k].setOpacity(.05);
+                        }
+                    }
+                    
+                    
                     for(var j = 0; j < installationContainer[index].length; j++){
                         if(installationContainerHighlighted[index][j].opacity == 0){
                             installationContainer[index][j].setOpacity(0);  
@@ -519,22 +527,30 @@
                     var center = locationArray[index][0];
                     closeAllTitles();
                     shrinkLogo();
-                        for(var j = 0; j < installationContainer[index].length; j++){
-                            if(installationContainer[index][j].opacity == 0){
-                                if(dataverseMap.getZoom() == 2)
-                                    installationContainer[index][j].setOpacity(.3);
-                                else if(dataverseMap.getZoom() < 4)
-                                    installationContainer[index][j].setOpacity(.4);
-                                else if(dataverseMap.getZoom() < 6)
-                                    installationContainer[index][j].setOpacity(.6);
-                                else installationContainer[index][j].setOpacity(.8);
-
-                                installationContainerHighlighted[index][j].setOpacity(0);
-                                for(var i = 0; i < markerArray.length; i++){
-                                    markerArray[i].setZIndex(google.maps.MAX_ZINDEX + 1);
-                            }
-                            }   
+                    
+                    for(var j = 0; j < installationContainer.length; j++){
+                        for(var k = 0; k < installationContainer[j].length; k++){
+                            if(dataverseMap.getZoom() == 2)
+                                installationContainer[j][k].setOpacity(.3);
+                            else if(dataverseMap.getZoom() < 4)
+                                installationContainer[j][k].setOpacity(.4);
+                            else if(dataverseMap.getZoom() < 6)
+                                installationContainer[j][k].setOpacity(.6);
+                            else installationContainer[j][k].setOpacity(.8);
                         }
+                    }
+                    
+                    for(var j = 0; j < installationContainer.length; j++){
+                        for(var k = 0; k < installationContainer[j].length; k++){
+                            installationContainerHighlighted[j][k].setOpacity(0);
+                        }   
+                    }
+                    
+                    for(var i = 0; i < markerArray.length; i++){
+                        markerArray[i].setZIndex(google.maps.MAX_ZINDEX + 1);
+                    }
+                    
+                    
 
                 }); 
                 
